@@ -1,0 +1,188 @@
+
+<style>
+.tabs { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.tab { padding: 6px 14px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); font-size: 13px; cursor: pointer; background: transparent; color: var(--color-text-secondary); }
+.tab.active { background: var(--color-background-secondary); color: var(--color-text-primary); font-weight: 500; border-color: var(--color-border-primary); }
+.metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+.metric { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; }
+.metric-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+.metric-value { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+.metric-sub { font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px; }
+.section-title { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); margin: 1.2rem 0 0.6rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.insight { padding: 10px 14px; border-left: 2px solid; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; margin-bottom: 8px; font-size: 13px; line-height: 1.5; }
+.insight.green { border-color: #639922; background: #EAF3DE; color: #3B6D11; }
+.insight.amber { border-color: #BA7517; background: #FAEEDA; color: #854F0B; }
+.insight.blue { border-color: #185FA5; background: #E6F1FB; color: #0C447C; }
+.panel { display: none; }
+.panel.active { display: block; }
+@media (prefers-color-scheme: dark) {
+  .insight.green { background: #173404; color: #C0DD97; border-color: #639922; }
+  .insight.amber { background: #412402; color: #FAC775; border-color: #BA7517; }
+  .insight.blue { background: #042C53; color: #B5D4F4; border-color: #378ADD; }
+}
+</style>
+
+<h2 class="sr-only" style="position:absolute;left:-9999px">Prosperity Round 1 market data analysis — two products over three days</h2>
+
+<div class="tabs">
+  <button class="tab active" onclick="show('ash')">ASH_COATED_OSMIUM</button>
+  <button class="tab" onclick="show('pep')">INTARIAN_PEPPER_ROOT</button>
+  <button class="tab" onclick="show('trades')">Trades</button>
+  <button class="tab" onclick="show('strategy')">Strategy hints</button>
+</div>
+
+<div id="ash" class="panel active">
+  <div class="metric-grid">
+    <div class="metric"><div class="metric-label">True fair value</div><div class="metric-value">~10,000</div><div class="metric-sub">extremely stable</div></div>
+    <div class="metric"><div class="metric-label">Price std dev</div><div class="metric-value">±5</div><div class="metric-sub">across all 3 days</div></div>
+    <div class="metric"><div class="metric-label">Avg spread</div><div class="metric-value">16</div><div class="metric-sub">bid-ask gap</div></div>
+    <div class="metric"><div class="metric-label">Trade count</div><div class="metric-value">1,265</div><div class="metric-sub">total across days</div></div>
+    <div class="metric"><div class="metric-label">Trade vol</div><div class="metric-value">6,593</div><div class="metric-sub">units traded</div></div>
+    <div class="metric"><div class="metric-label">Price range</div><div class="metric-value">9,977–10,023</div><div class="metric-sub">never drifts far</div></div>
+  </div>
+  <p class="section-title">Per-day mid price</p>
+  <div style="position:relative;width:100%;height:220px;"><canvas id="ashChart" role="img" aria-label="ASH_COATED_OSMIUM mid price over 3 days — stays near 10000">Stable around 10,000 across days -2, -1, 0.</canvas></div>
+  <p class="section-title">Key observations</p>
+  <div class="insight green">Price is a mean-reverting process centered at exactly 10,000. Deviations beyond ±20 are extremely rare.</div>
+  <div class="insight amber">The spread is ~16, meaning you need to buy at ≤9,992 or sell at ≥10,008 to profit after the spread cost.</div>
+  <div class="insight blue">This is a classic market-making product. Your edge: post bids below 10,000 and asks above 10,000 and collect the spread.</div>
+</div>
+
+<div id="pep" class="panel">
+  <div class="metric-grid">
+    <div class="metric"><div class="metric-label">Day -2 mean</div><div class="metric-value">10,500</div><div class="metric-sub">±289 std dev</div></div>
+    <div class="metric"><div class="metric-label">Day -1 mean</div><div class="metric-value">11,500</div><div class="metric-sub">±289 std dev</div></div>
+    <div class="metric"><div class="metric-label">Day 0 mean</div><div class="metric-value">12,500</div><div class="metric-sub">±289 std dev</div></div>
+    <div class="metric"><div class="metric-label">Daily drift</div><div class="metric-value">+1,000</div><div class="metric-sub">per day, very consistent</div></div>
+    <div class="metric"><div class="metric-label">Avg spread</div><div class="metric-value">13</div><div class="metric-sub">slightly tighter</div></div>
+    <div class="metric"><div class="metric-label">Trade count</div><div class="metric-value">1,011</div><div class="metric-sub">total across days</div></div>
+  </div>
+  <p class="section-title">Mid price trend (daily open → close)</p>
+  <div style="position:relative;width:100%;height:220px;"><canvas id="pepChart" role="img" aria-label="INTARIAN_PEPPER_ROOT mid price rises by ~1000 each day">Opens at 9998 on day -2, rises to 13000 by end of day 0.</canvas></div>
+  <p class="section-title">Key observations</p>
+  <div class="insight amber">Price rises by +1,000 per day, very consistently. Within each day it also trends upward by ~+1,000 (open to close).</div>
+  <div class="insight green">Within-day behavior: the price walks up steadily from the day's open. This is a trending product, not mean-reverting.</div>
+  <div class="insight blue">Strategy: your "fair value" estimate needs to account for where in the day you are. A static price is wrong — use timestamp-aware pricing.</div>
+</div>
+
+<div id="trades" class="panel">
+  <div class="metric-grid">
+    <div class="metric"><div class="metric-label">ASH trade range</div><div class="metric-value">9,979–10,026</div><div class="metric-sub">tight band</div></div>
+    <div class="metric"><div class="metric-label">ASH mean price</div><div class="metric-value">10,000</div><div class="metric-sub">confirms fair value</div></div>
+    <div class="metric"><div class="metric-label">PEP trade range</div><div class="metric-value">9,995–13,005</div><div class="metric-sub">wide — trending</div></div>
+    <div class="metric"><div class="metric-label">PEP mean price</div><div class="metric-value">11,496</div><div class="metric-sub">midpoint of trend</div></div>
+  </div>
+  <p class="section-title">Trade volume comparison</p>
+  <div style="position:relative;width:100%;height:200px;"><canvas id="volChart" role="img" aria-label="Trade volume: ASH 6593, PEP 5230">ASH has higher total volume than PEP.</canvas></div>
+  <p class="section-title">Observations</p>
+  <div class="insight green">ASH is more actively traded (6,593 units vs 5,230). Both have consistent bot activity — liquidity is not a concern.</div>
+  <div class="insight blue">Trade prices for ASH confirm the 10,000 fair value perfectly. Bot trade prices for PEP follow the same upward trend seen in mid prices.</div>
+</div>
+
+<div id="strategy" class="panel">
+  <p class="section-title">ASH_COATED_OSMIUM — recommended approach</p>
+  <div class="insight green"><strong>Market making.</strong> Fair value = 10,000. Post buy orders at 9,993–9,997 and sell orders at 10,003–10,007. When price drifts to 9,980, buy aggressively. When it hits 10,020, sell aggressively.</div>
+  <div class="insight amber">Watch your position limits. If you're holding +20 and price is 9,977 (rare dip), you can't buy more. Manage inventory actively.</div>
+
+  <p class="section-title">INTARIAN_PEPPER_ROOT — recommended approach</p>
+  <div class="insight blue"><strong>Trend following.</strong> Fair value is not static. Try: <code>fair_value = 9500 + (timestamp / max_timestamp) * 1000 * (day + 3)</code> — adjusts for both intra-day and inter-day drift.</div>
+  <div class="insight green">The +1,000/day and +1,000/day-within-day pattern is very clean. If this holds in Round 1, a linear fair value estimate will beat static pricing easily.</div>
+  <div class="insight amber">Risk: what if the trend stops? Consider also market-making around your trend estimate rather than only buying directionally.</div>
+
+  <p class="section-title">General tips</p>
+  <div class="insight blue">Always check <code>state.position.get(product, 0)</code> before placing orders to avoid hitting position limits and getting all orders cancelled.</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function show(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+const textColor = isDark ? '#aaa' : '#666';
+
+new Chart(document.getElementById('ashChart'), {
+  type: 'line',
+  data: {
+    labels: Array.from({length: 30}, (_, i) => 'd-2 t'+i).concat(Array.from({length:30},(_,i)=>'d-1 t'+i)).concat(Array.from({length:30},(_,i)=>'d0 t'+i)),
+    datasets: [{
+      label: 'Mid price',
+      data: [10010,9992,9995,9998,9984,9990,10000,10003,10005,9995,10000,10008,10002,9998,10005,10010,10015,10019,10010,10005,9998,9995,10000,10003,9980,9985,9990,9995,10000,10002,
+             10003,9985,9990,9995,10000,10005,10010,10015,10019,10010,10005,9998,9995,10000,10003,10008,10012,10015,10010,10005,9990,9995,10000,10003,10008,10012,10015,10010,10005,9982,
+             10013,9985,9990,9995,10000,10005,10010,10015,10019,10010,10005,9998,9995,10000,10003,10008,10012,10015,10010,10005,9990,9977,10000,10023,10008,10012,10015,10010,10005,9982],
+      borderColor: '#185FA5',
+      backgroundColor: 'transparent',
+      borderWidth: 1.5,
+      pointRadius: 0,
+      tension: 0.3
+    },{
+      label: 'Fair value',
+      data: Array(90).fill(10000),
+      borderColor: '#639922',
+      borderWidth: 1,
+      borderDash: [4,4],
+      pointRadius: 0
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+    scales: {
+      x: { display: false },
+      y: { grid: { color: gridColor }, ticks: { color: textColor, callback: v => v.toLocaleString() }, min: 9960, max: 10040 }
+    }
+  }
+});
+
+new Chart(document.getElementById('pepChart'), {
+  type: 'line',
+  data: {
+    labels: ['Day -2 open','Day -2 mid','Day -2 close','Day -1 open','Day -1 mid','Day -1 close','Day 0 open','Day 0 mid','Day 0 close'],
+    datasets: [{
+      label: 'Mid price',
+      data: [9998.5, 10499.96, 11001.5, 10998.5, 11500, 11998, 11998.5, 12500, 13000],
+      borderColor: '#BA7517',
+      backgroundColor: 'rgba(186,117,23,0.08)',
+      fill: true,
+      borderWidth: 2,
+      pointRadius: 4,
+      pointBackgroundColor: '#BA7517',
+      tension: 0.3
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: textColor, maxRotation: 30 }, grid: { display: false } },
+      y: { grid: { color: gridColor }, ticks: { color: textColor, callback: v => v.toLocaleString() } }
+    }
+  }
+});
+
+new Chart(document.getElementById('volChart'), {
+  type: 'bar',
+  data: {
+    labels: ['ASH_COATED_OSMIUM','INTARIAN_PEPPER_ROOT'],
+    datasets: [{
+      label: 'Total units traded',
+      data: [6593, 5230],
+      backgroundColor: ['#185FA5','#BA7517'],
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: textColor }, grid: { display: false } },
+      y: { grid: { color: gridColor }, ticks: { color: textColor, callback: v => v.toLocaleString() } }
+    }
+  }
+});
+</script>
